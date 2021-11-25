@@ -1,7 +1,7 @@
 import { Component, ChangeDetectionStrategy, OnDestroy } from '@angular/core';
 import { ControlValueAccessor, FormControl } from '@angular/forms';
 import { distinctUntilChanged, Subject, takeUntil, tap } from 'rxjs';
-import { WeatherMode } from '../../types/weather-mode.enum';
+import { WeatherMode, WeatherModeValue } from '@bp/weather-forecast/services';
 
 @Component({
 	selector: 'bp-weather-mode-select',
@@ -21,7 +21,7 @@ export class WeatherModeSelectComponent implements ControlValueAccessor, OnDestr
 		this.init();
 	}
 
-	private onChange: (value: WeatherMode) => void = () => { return; };
+	private onChange: (value: WeatherModeValue) => void = () => { return; };
 	private onTouched: () => void = () => { return; };
 
 	private init() {
@@ -34,7 +34,7 @@ export class WeatherModeSelectComponent implements ControlValueAccessor, OnDestr
 			.subscribe();
 	}
 
-	change(value: WeatherMode) {
+	change(value: WeatherModeValue) {
 		this.onChange?.(value);
 	}
 
@@ -42,7 +42,7 @@ export class WeatherModeSelectComponent implements ControlValueAccessor, OnDestr
 		this.onTouched?.();
 	}
 
-	writeValue(value: WeatherMode): void {
+	writeValue(value: WeatherModeValue): void {
 		this.modeControl.setValue(value);
 	}
 

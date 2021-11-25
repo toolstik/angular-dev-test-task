@@ -4,13 +4,13 @@
 		<table>
 			<thead>
 				<tr>
-					<th>City</th>
+					<th>City Name</th>
 					<th *ngFor="let item of weatherData"> {{ item.date | date }} </th>
 				</tr>
 			</thead>
 			<tbody>
 				<tr>
-					<td>{{weather.city}}</td>
+					<td>{{ weather.city }}</td>
 					<td *ngFor="let item of weatherData">
 						{{ item.temperature }}
 					</td>
