@@ -1,5 +1,5 @@
 export interface City {
 	name: string;
-	lat: string;
-	lon: string;
+	lat: number;
+	lon: number;
 }

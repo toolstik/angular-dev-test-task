@@ -1,4 +1,4 @@
-import { WeatherData } from '@bp/weather-forecast/services';
+import { coordsEqual, WeatherData } from '@bp/weather-forecast/services';
 import { createReducer, on } from '@ngrx/store';
 import { WeatherActions } from './weather.actions';
 import { initialState } from './weather.state';
@@ -6,17 +6,14 @@ import { initialState } from './weather.state';
 export const weatherReducer = createReducer(
 	initialState,
 	on(
-		WeatherActions.CITY_LOAD_REQUEST,
-		WeatherActions.MODE_LOAD_REQUEST,
+		WeatherActions.LOAD_REQUEST,
 		(state) => ({ ...state, loading: true, error: null })
 	),
-	on(WeatherActions.LOAD_SUCCESS, (state, { city, mode, weather }) => {
+	on(WeatherActions.LOAD_SUCCESS, (state, { weather }) => {
 
-		if (state.city?.name !== city?.name) {
+		if (!coordsEqual(weather, state.weather)) {
 			return {
 				...state,
-				city,
-				mode,
 				weather,
 				loading: false,
 				error: null,
@@ -24,13 +21,12 @@ export const weatherReducer = createReducer(
 		}
 
 		const newWeather = {
-			...(state.weather || {}),
-			[mode]: weather?.[mode],
+			...state.weather,
+			...weather,
 		} as WeatherData;
 
 		return {
 			...state,
-			mode,
 			weather: newWeather,
 			loading: false,
 			error: null,

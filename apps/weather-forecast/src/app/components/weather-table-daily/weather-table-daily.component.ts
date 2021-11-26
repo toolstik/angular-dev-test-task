@@ -19,12 +19,10 @@ type WeatherDataLocal = {
 export class WeatherTableDailyComponent {
 
 	@Input() set data(value: WeatherDailyItem[] | null) {
-		console.log('set data', value);
 		this.data$$.next(value);
 	}
 
 	@Input() set city(value: City | null) {
-		console.log('set city', value);
 		this.city$$.next(value);
 	}
 
@@ -34,8 +32,6 @@ export class WeatherTableDailyComponent {
 	data$ = combineLatest([this.city$$, this.data$$]).pipe(
 		takeUntilDestroyed(this),
 		map(([city, data]) => {
-			console.log('combine', city, data);
-
 			return {
 				city: city?.name,
 				data: data?.map(i => {

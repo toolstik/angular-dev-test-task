@@ -4,7 +4,7 @@
 
 <!-- <bp-weather-table-daily [city]="city$ | async"></bp-weather-table-daily> -->
 
-<ng-container [ngSwitch]="modeControl.valueChanges | async">
+<ng-container [ngSwitch]="mode$ | async">
 
 	<ng-template [ngSwitchCase]="'hourly'">
 		<bp-weather-table-hourly [city]="city$ | async"

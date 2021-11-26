@@ -16,7 +16,14 @@ export type WeatherHourlyItem = {
 	temp: number;
 }
 
-export type WeatherData = Pattern<Record<WeatherModeValue, unknown[]>, {
+export type WeatherData = { lat: number; lon: number } & Pattern<Record<WeatherModeValue, unknown[]>, {
 	hourly: WeatherHourlyItem[],
 	daily: WeatherDailyItem[],
 }>
+
+export function coordsEqual<
+	X extends { lat: number, lon: number },
+	Y extends { lat: number, lon: number } = X
+>(x: X | null, y: Y | null) {
+	return x?.lat === y?.lat && x?.lon === y?.lon;
+}

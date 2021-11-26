@@ -21,7 +21,7 @@ export class WeatherForecastApiService {
 			);
 	}
 
-	getWeather<T extends WeatherModeValue>(lat: string, lon: string, mode: T) {
+	getWeather<T extends WeatherModeValue>(lat: number, lon: number, mode: T) {
 		const exclude = this.excludes.filter(i => i !== mode).join(',');
 
 		return this.http

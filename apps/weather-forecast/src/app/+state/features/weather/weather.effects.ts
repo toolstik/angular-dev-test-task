@@ -1,8 +1,10 @@
 import { Injectable } from '@angular/core';
-import { WeatherForecastApiService } from '@bp/weather-forecast/services';
+import { coordsEqual, WeatherForecastApiService } from '@bp/weather-forecast/services';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
+import { ROUTER_NAVIGATED } from '@ngrx/router-store';
 import { select, Store } from '@ngrx/store';
-import { catchError, map, of, switchMap, withLatestFrom } from "rxjs";
+import { catchError, distinctUntilChanged, map, of, switchMap, withLatestFrom } from "rxjs";
+import { selectMode } from '../../router.facade';
 import { CityActions } from '../city/city.actions';
 import { WeatherActions } from './weather.actions';
 import { WeatherSelectors } from './weather.selectors';
@@ -10,68 +12,59 @@ import { WeatherSelectors } from './weather.selectors';
 
 @Injectable()
 export class WeatherEffects {
-	cityLoaded$ = createEffect(() =>
+
+	modeChanged$ = createEffect(() => this.actions$.pipe(
+		ofType(ROUTER_NAVIGATED),
+		withLatestFrom(this.store.select(selectMode)),
+		map(([, mode]) => mode),
+		distinctUntilChanged(),
+		withLatestFrom(this.store.pipe(select(WeatherSelectors.state))),
+		switchMap(([mode, state]) => {
+			const { weather } = state;
+			if (!weather || weather[mode]) {
+				return of();
+			}
+
+			const { lat, lon } = weather;
+
+			if (!lat || !lon) {
+				return of();
+			}
+
+			return of(WeatherActions.LOAD_REQUEST({ mode, lat, lon }))
+
+		})
+	));
+
+	cityChanged$ = createEffect(() => this.actions$.pipe(
+		ofType(CityActions.LOAD_SUCCESS),
+		map(a => a.city),
+		distinctUntilChanged(coordsEqual),
+		withLatestFrom(this.store.select(selectMode), this.store.pipe(select(WeatherSelectors.state))),
+		switchMap(([city, mode, state]) => {
+			if (!city?.lon || !city?.lat) {
+				return of(WeatherActions.LOAD_SUCCESS({ weather: null }));
+			}
+
+			const { weather } = state;
+			const { lat, lon } = city;
+
+			if (coordsEqual(city, weather)) {
+				return of();
+			}
+
+			return of(WeatherActions.LOAD_REQUEST({ mode, lat, lon }));
+
+		})
+	));
+
+	loadRequest$ = createEffect(() =>
 		this.actions$.pipe(
-			ofType(CityActions.LOAD_SUCCESS),
-			switchMap(({ city }) => {
-				if (!city) {
-					return of(WeatherActions.CLEAR_DATA())
-				}
-
-				return of(WeatherActions.CITY_LOAD_REQUEST({ city }));
-			}),
-		)
-	);
-
-	loadByCity$ = createEffect(() =>
-		this.actions$.pipe(
-			ofType(WeatherActions.CITY_LOAD_REQUEST),
-			withLatestFrom(this.store.pipe(select(WeatherSelectors.state))),
-			switchMap(([{ city }, state]) => {
-				if (!city) {
-					return of(WeatherActions.CLEAR_DATA())
-				}
-
-				// same city, do nothing
-				if (city.name === state.city?.name) {
-					return of();
-				}
-
-				const { mode } = state;
-				const { lat, lon } = city;
-
+			ofType(WeatherActions.LOAD_REQUEST),
+			switchMap(({ mode, lat, lon }) => {
 				return this.weatherService.getWeather(lat, lon, mode)
 					.pipe(
-						map(weather => WeatherActions.LOAD_SUCCESS({ city, mode, weather })),
-						catchError(error => of(WeatherActions.LOAD_FAILURE({ error })))
-					);
-			}),
-		)
-	);
-
-	loadByMode$ = createEffect(() =>
-		this.actions$.pipe(
-			ofType(WeatherActions.MODE_LOAD_REQUEST),
-			withLatestFrom(this.store.pipe(select(WeatherSelectors.state))),
-			switchMap(([{ mode }, state]) => {
-
-				// that mode data already exists, do nothing
-				if (state.weather?.[mode]) {
-					return of();
-				}
-
-				const { city } = state;
-
-				// city is not defined yet, do nothing
-				if (!city) {
-					return of();
-				}
-
-				const { lat, lon } = city;
-
-				return this.weatherService.getWeather(lat, lon, state.mode)
-					.pipe(
-						map(weather => WeatherActions.LOAD_SUCCESS({ city, mode, weather })),
+						map(weather => WeatherActions.LOAD_SUCCESS({ weather })),
 						catchError(error => of(WeatherActions.LOAD_FAILURE({ error })))
 					);
 			}),

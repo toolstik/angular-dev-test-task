@@ -32,7 +32,6 @@ export class WeatherTableHourlyComponent {
 	data$ = combineLatest([this.city$$, this.data$$]).pipe(
 		takeUntilDestroyed(this),
 		map(([city, data]) => {
-			console.log('hourly', city, data);
 			return {
 				city: city?.name,
 				data: data?.map(i => {

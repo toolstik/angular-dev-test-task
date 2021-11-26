@@ -27,6 +27,7 @@ export class WeatherDashboardComponent implements OnInit {
 	weather$ = this.weatherFacade.weather$;
 	daily$ = this.weatherFacade.daily$;
 	hourly$ = this.weatherFacade.hourly$;
+	mode$ = this.routerFacade.mode$;
 
 	queryParams$ = this.routerFacade.selectQueryParams<QueryParams>();
 
@@ -41,18 +42,6 @@ export class WeatherDashboardComponent implements OnInit {
 	}
 
 	private init() {
-		this.queryParams$
-			.pipe(
-				takeUntilDestroyed(this),
-				tap(params => {
-					const { query, mode } = (params || {});
-
-					this.cityFacade.loadCity(query);
-					this.weatherFacade.loadByMode(mode || WeatherMode.DAILY);
-				})
-			)
-			.subscribe();
-
 		this.searchControl.valueChanges
 			.pipe(
 				takeUntilDestroyed(this),
