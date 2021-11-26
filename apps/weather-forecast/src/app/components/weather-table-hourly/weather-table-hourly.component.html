@@ -1,0 +1,31 @@
+<ng-container *ngIf="(data$ | async) as weather; else loading">
+	<ng-container *ngIf="(weather.data?.length && weather.data) as weatherData; else noData">
+
+		<table>
+			<thead>
+				<tr>
+					<th>City Name</th>
+					<th *ngFor="let item of weatherData"> {{ item.date | date : 'd' }} </th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>{{ weather.city }}</td>
+					<td *ngFor="let item of weatherData">
+						{{ item.temperature }}
+					</td>
+
+				</tr>
+			</tbody>
+		</table>
+
+	</ng-container>
+</ng-container>
+
+<ng-template #loading>
+	<div>...loading</div>
+</ng-template>
+
+<ng-template #noData>
+	<div>No data</div>
+</ng-template>

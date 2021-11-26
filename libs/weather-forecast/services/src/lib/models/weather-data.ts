@@ -13,12 +13,7 @@ export type WeatherDailyItem = {
 
 export type WeatherHourlyItem = {
 	dt: number;
-	temp: {
-		day: number;
-		min: number;
-		max: number;
-		night: number;
-	}
+	temp: number;
 }
 
 export type WeatherData = Pattern<Record<WeatherModeValue, unknown[]>, {

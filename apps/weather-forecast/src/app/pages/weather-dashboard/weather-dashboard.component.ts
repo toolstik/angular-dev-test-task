@@ -26,6 +26,7 @@ export class WeatherDashboardComponent {
 	city$ = this.cityFacade.currentCity$;
 	weather$ = this.weatherFacade.weather$;
 	daily$ = this.weatherFacade.daily$;
+	hourly$ = this.weatherFacade.hourly$;
 
 	constructor(
 		private router: Router,
