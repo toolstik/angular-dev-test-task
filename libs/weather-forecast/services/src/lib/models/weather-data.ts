@@ -1,3 +1,4 @@
+import { Pattern } from "../utils/pattern.type";
 import { WeatherModeValue } from "./weather-mode.enum";
 
 export type WeatherDailyItem = {
@@ -19,9 +20,6 @@ export type WeatherHourlyItem = {
 		night: number;
 	}
 }
-
-//just helper type for type strictness
-type Pattern<U, T extends U> = T;
 
 export type WeatherData = Pattern<Record<WeatherModeValue, unknown[]>, {
 	hourly: WeatherHourlyItem[],

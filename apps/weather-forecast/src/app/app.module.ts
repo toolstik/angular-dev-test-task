@@ -4,6 +4,8 @@ import { EffectsModule } from '@ngrx/effects';
 import { routerReducer, StoreRouterConnectingModule } from '@ngrx/router-store';
 import { StoreModule } from '@ngrx/store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+import { Features } from './+state/features/features';
+import { RootStoreModule } from './+state/root-store.module';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 
@@ -16,7 +18,7 @@ import { AppComponent } from './app.component';
 		EffectsModule.forRoot(),
 		StoreModule.forRoot(
 			{
-				router: routerReducer
+				[Features.ROUTER]: routerReducer
 			},
 			{
 				metaReducers: [],
@@ -31,6 +33,7 @@ import { AppComponent } from './app.component';
 		}),
 		StoreRouterConnectingModule.forRoot(),
 
+		RootStoreModule,
 		AppRoutingModule
 	],
 	providers: [],

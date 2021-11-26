@@ -7816,6 +7816,13 @@ ng-packagr@12.2.5:
   optionalDependencies:
     esbuild "^0.12.15"
 
+ngx-observable-lifecycle@^2.2.0:
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/ngx-observable-lifecycle/-/ngx-observable-lifecycle-2.2.0.tgz#4b36ea8e948b4776a03d7e767c735110cf3d7896"
+  integrity sha512-3g0NgYw0wIP8+IRauGkte/xyhcDaqH5rW0NGTtn3yY9Za6exwpPsiFCSoLBHGyBm5DilQgNbs3xATf9H//uQWA==
+  dependencies:
+    tslib "^2.0.0"
+
 nice-napi@^1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/nice-napi/-/nice-napi-1.0.2.tgz#dc0ab5a1eac20ce548802fc5686eaa6bc654927b"
