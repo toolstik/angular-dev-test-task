@@ -1,5 +1,6 @@
 import { NgModule } from "@angular/core";
 import { CityModule } from "./features/city/city.module";
+import { WeatherModule } from "./features/weather/weather.module";
 import { RouterFacade } from "./router.facade";
 
 @NgModule({
@@ -8,6 +9,7 @@ import { RouterFacade } from "./router.facade";
 	],
 	imports: [
 		CityModule,
+		WeatherModule,
 	]
 })
 export class RootStoreModule {

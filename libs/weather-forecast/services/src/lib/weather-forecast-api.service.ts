@@ -25,8 +25,7 @@ export class WeatherForecastApiService {
 		const exclude = this.excludes.filter(i => i !== mode).join(',');
 
 		return this.http
-			.get<WeatherData>(`https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&exclude=${exclude}&appid=${this._apiKey}`)
-			.pipe(map(i => i[mode]));
+			.get<WeatherData>(`https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&exclude=${exclude}&appid=${this._apiKey}`);
 	}
 
 }

@@ -1,11 +1,11 @@
-import { ActionCreator, createAction, NotAllowedCheck, props } from "@ngrx/store"
-import { TypedAction } from "@ngrx/store/src/models"
+import { ActionCreator, createAction, props } from "@ngrx/store";
+import { TypedAction } from "@ngrx/store/src/models";
 
 type Dictionary<T extends string = string, V = string> = Record<T, V>;
 
-type ActionProps<T extends Dictionary> = Record<keyof T, object>
+type ActionProps<T extends Dictionary> = Record<keyof T, object | void>
 
-type ActionConstructor<T extends string, P extends object> = ActionCreator<T, (props: P & NotAllowedCheck<P>) => P & TypedAction<T>>
+type ActionConstructor<T extends string, P extends object | void> = ActionCreator<T, (props: P) => P & TypedAction<T>>
 
 type CombinedActions<T extends Dictionary, P extends ActionProps<T>> = {
 	readonly [K in keyof T]: ActionConstructor<T[K], P[K]>;

@@ -1,12 +1,19 @@
-import { Component, ChangeDetectionStrategy, OnDestroy } from '@angular/core';
-import { ControlValueAccessor, FormControl } from '@angular/forms';
-import { distinctUntilChanged, Subject, takeUntil, tap } from 'rxjs';
+import { ChangeDetectionStrategy, Component, OnDestroy } from '@angular/core';
+import { ControlValueAccessor, FormControl, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { WeatherMode, WeatherModeValue } from '@bp/weather-forecast/services';
+import { distinctUntilChanged, Subject, takeUntil, tap } from 'rxjs';
 
 @Component({
 	selector: 'bp-weather-mode-select',
 	templateUrl: './weather-mode-select.component.html',
 	styleUrls: ['./weather-mode-select.component.scss'],
+	providers: [
+		{
+			provide: NG_VALUE_ACCESSOR,
+			useExisting: WeatherModeSelectComponent,
+			multi: true,
+		},
+	],
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class WeatherModeSelectComponent implements ControlValueAccessor, OnDestroy {

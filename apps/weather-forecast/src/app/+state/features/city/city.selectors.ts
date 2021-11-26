@@ -6,5 +6,5 @@ export class CitySelectors {
 
 	private static readonly featureSelector = createFeatureSelector<CityState>(Features.CITY);
 
-	static readonly getCurrent = createSelector(this.featureSelector, state => state.current);
+	static readonly current = createSelector(this.featureSelector, state => state.current);
 }

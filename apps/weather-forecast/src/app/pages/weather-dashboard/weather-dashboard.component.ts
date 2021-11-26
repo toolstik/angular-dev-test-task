@@ -1,9 +1,10 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { takeUntilDestroyed, WeatherModeValue } from '@bp/weather-forecast/services';
+import { takeUntilDestroyed, WeatherMode, WeatherModeValue } from '@bp/weather-forecast/services';
 import { debounceTime, distinctUntilChanged, switchMap, tap } from 'rxjs';
 import { CityFacade } from '../../+state/features/city/city.facade';
+import { WeatherFacade } from '../../+state/features/weather/weather.facade';
 import { RouterFacade } from '../../+state/router.facade';
 
 type QueryParams = {
@@ -20,12 +21,14 @@ type QueryParams = {
 export class WeatherDashboardComponent {
 
 	searchControl = new FormControl();
+	modeControl = new FormControl(WeatherMode.DAILY);
 
 	constructor(
 		private router: Router,
 		private activatedRoute: ActivatedRoute,
 		private routerFacade: RouterFacade,
-		private cityFacade: CityFacade
+		private cityFacade: CityFacade,
+		private weatherFacade: WeatherFacade,
 	) {
 		this.init();
 	}
@@ -36,9 +39,12 @@ export class WeatherDashboardComponent {
 			.pipe(
 				takeUntilDestroyed(this),
 				tap(params => {
-					console.log('params', params);
-					this.cityFacade.loadCity(params.query);
-					this.searchControl.setValue(params.query);
+					const { query, mode } = params;
+
+					this.cityFacade.loadCity(query);
+					this.weatherFacade.loadByMode(mode || 'daily');
+					this.searchControl.setValue(query);
+					this.modeControl.setValue(mode || 'daily');
 				})
 			)
 			.subscribe();
@@ -51,6 +57,18 @@ export class WeatherDashboardComponent {
 				switchMap(query => this.router.navigate([], {
 					relativeTo: this.activatedRoute,
 					queryParams: { query },
+					queryParamsHandling: 'merge'
+				}))
+			)
+			.subscribe();
+
+		this.modeControl.valueChanges
+			.pipe(
+				takeUntilDestroyed(this),
+				distinctUntilChanged(),
+				switchMap(mode => this.router.navigate([], {
+					relativeTo: this.activatedRoute,
+					queryParams: { mode },
 					queryParamsHandling: 'merge'
 				}))
 			)
