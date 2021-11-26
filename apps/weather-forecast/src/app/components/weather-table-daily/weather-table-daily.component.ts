@@ -1,46 +1,13 @@
-import { Component, OnInit, ChangeDetectionStrategy, Input } from '@angular/core';
-import { Subject } from 'rxjs';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { City, takeUntilDestroyed, WeatherDailyItem } from '@bp/weather-forecast/services';
+import { combineLatest, map, Subject } from 'rxjs';
 
-type WeatherData = {
+type WeatherDataLocal = {
 	city: string,
 	data: {
 		date: Date,
 		temperature: number,
 	}[]
-}
-
-const TEST_DATA: WeatherData = {
-	city: 'London',
-	data: [
-		{
-			date: new Date(),
-			temperature: 15,
-		},
-		{
-			date: new Date(),
-			temperature: 13,
-		},
-		{
-			date: new Date(),
-			temperature: 14,
-		},
-		{
-			date: new Date(),
-			temperature: 20,
-		},
-		{
-			date: new Date(),
-			temperature: 16,
-		},
-		{
-			date: new Date(),
-			temperature: 5,
-		},
-		{
-			date: new Date(),
-			temperature: -2,
-		},
-	]
 }
 
 @Component({
@@ -49,22 +16,32 @@ const TEST_DATA: WeatherData = {
 	styleUrls: ['./weather-table-daily.component.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class WeatherTableDailyComponent implements OnInit {
+export class WeatherTableDailyComponent {
 
-	@Input() set data(value: WeatherData) {
+	@Input() set data(value: WeatherDailyItem[] | null) {
 		this.data$$.next(value);
 	}
 
-	private data$$ = new Subject<WeatherData>();
-
-	data$ = this.data$$.asObservable();
-
-	ngOnInit(): void {
-
-		setTimeout(() => {
-			this.data = TEST_DATA;
-		}, 3000);
-
+	@Input() set city(value: City | null) {
+		this.city$$.next(value);
 	}
+
+	private data$$ = new Subject<WeatherDailyItem[] | null>();
+	private city$$ = new Subject<City | null>();
+
+	data$ = combineLatest([this.city$$, this.data$$]).pipe(
+		takeUntilDestroyed(this),
+		map(([city, data]) => {
+			return {
+				city: city?.name,
+				data: data?.map(i => {
+					return {
+						date: new Date(i.dt * 1000),
+						temperature: i.temp.day,
+					}
+				})
+			} as WeatherDataLocal;
+		})
+	);
 
 }

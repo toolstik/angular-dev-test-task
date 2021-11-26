@@ -23,6 +23,10 @@ export class WeatherDashboardComponent {
 	searchControl = new FormControl();
 	modeControl = new FormControl(WeatherMode.DAILY);
 
+	city$ = this.cityFacade.currentCity$;
+	weather$ = this.weatherFacade.weather$;
+	daily$ = this.weatherFacade.daily$;
+
 	constructor(
 		private router: Router,
 		private activatedRoute: ActivatedRoute,
@@ -39,12 +43,12 @@ export class WeatherDashboardComponent {
 			.pipe(
 				takeUntilDestroyed(this),
 				tap(params => {
-					const { query, mode } = params;
+					const { query, mode } = (params || {});
 
 					this.cityFacade.loadCity(query);
-					this.weatherFacade.loadByMode(mode || 'daily');
+					this.weatherFacade.loadByMode(mode || WeatherMode.DAILY);
 					this.searchControl.setValue(query);
-					this.modeControl.setValue(mode || 'daily');
+					this.modeControl.setValue(mode || WeatherMode.DAILY);
 				})
 			)
 			.subscribe();

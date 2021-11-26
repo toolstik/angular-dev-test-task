@@ -5,7 +5,7 @@
 			<thead>
 				<tr>
 					<th>City Name</th>
-					<th *ngFor="let item of weatherData"> {{ item.date | date }} </th>
+					<th *ngFor="let item of weatherData"> {{ item.date | date : 'd' }} </th>
 				</tr>
 			</thead>
 			<tbody>
