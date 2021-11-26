@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { takeUntilDestroyed, WeatherMode, WeatherModeValue } from '@bp/weather-forecast/services';
-import { debounceTime, distinctUntilChanged, switchMap, take, tap } from 'rxjs';
+import { combineLatest, debounceTime, distinctUntilChanged, map, switchMap, take, tap } from 'rxjs';
 import { CityFacade } from '../../+state/features/city/city.facade';
 import { WeatherFacade } from '../../+state/features/weather/weather.facade';
 import { RouterFacade } from '../../+state/router.facade';
@@ -24,10 +24,17 @@ export class WeatherDashboardComponent implements OnInit {
 	modeControl = new FormControl(WeatherMode.DAILY);
 
 	city$ = this.cityFacade.currentCity$;
+	cityState$ = this.cityFacade.state$;
 	weather$ = this.weatherFacade.weather$;
+	weatherState$ = this.weatherFacade.state$;
 	daily$ = this.weatherFacade.daily$;
 	hourly$ = this.weatherFacade.hourly$;
 	mode$ = this.routerFacade.mode$;
+
+	loading$ = combineLatest([this.cityState$, this.weatherState$])
+		.pipe(
+			map(([c, w]) => c.loading || w.loading)
+		);
 
 	queryParams$ = this.routerFacade.selectQueryParams<QueryParams>();
 

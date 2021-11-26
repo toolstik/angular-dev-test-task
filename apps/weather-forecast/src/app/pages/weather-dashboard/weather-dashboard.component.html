@@ -10,18 +10,27 @@
 	<tui-input [formControl]="searchControl">Enter a city name</tui-input>
 </div>
 
-<ng-container [ngSwitch]="mode$ | async">
-	<div class="table-block">
-
-		<ng-template [ngSwitchCase]="'hourly'">
-			<bp-weather-table-hourly [city]="city$ | async"
-									 [data]="hourly$ | async"></bp-weather-table-hourly>
-		</ng-template>
-
-		<ng-template [ngSwitchCase]="'daily'">
-			<bp-weather-table-daily [city]="city$ | async"
-									[data]="daily$ | async"></bp-weather-table-daily>
-		</ng-template>
-
+<ng-container *ngIf="loading$ | async; else table">
+	<div style="text-align: center;">
+		<!-- <h2>...loading</h2> -->
+		<tui-loader></tui-loader>
 	</div>
 </ng-container>
+
+<ng-template #table>
+	<ng-container [ngSwitch]="mode$ | async">
+		<div class="table-block">
+
+			<ng-template [ngSwitchCase]="'hourly'">
+				<bp-weather-table-hourly [city]="city$ | async"
+										 [data]="hourly$ | async"></bp-weather-table-hourly>
+			</ng-template>
+
+			<ng-template [ngSwitchCase]="'daily'">
+				<bp-weather-table-daily [city]="city$ | async"
+										[data]="daily$ | async"></bp-weather-table-daily>
+			</ng-template>
+
+		</div>
+	</ng-container>
+</ng-template>

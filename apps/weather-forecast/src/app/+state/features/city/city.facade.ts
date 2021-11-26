@@ -7,6 +7,7 @@ import { CitySelectors } from './city.selectors';
 @Injectable()
 export class CityFacade {
 
+	readonly state$ = this.store.pipe(select(CitySelectors.state));
 	readonly currentCity$ = this.store.pipe(select(CitySelectors.current));
 
 	constructor(private readonly store: Store) { }

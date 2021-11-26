@@ -6,6 +6,7 @@ import { WeatherSelectors } from './weather.selectors';
 @Injectable()
 export class WeatherFacade {
 
+	readonly state$ = this.store.pipe(select(WeatherSelectors.state));
 	readonly weather$ = this.store.pipe(select(WeatherSelectors.weather));
 	readonly daily$ = this.store.pipe(select(WeatherSelectors.daily));
 	readonly hourly$ = this.store.pipe(select(WeatherSelectors.hourly));

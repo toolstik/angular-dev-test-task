@@ -29,9 +29,11 @@ export class CityEffects {
 
 				return this.weatherService.getCities(action.query).pipe(
 					map(city => CityActions.LOAD_SUCCESS({ city })),
-					catchError(error => error.cod === 404
-						? of(CityActions.LOAD_SUCCESS({ city: null }))
-						: of(CityActions.LOAD_FAILURE({ error }))
+					catchError(error => {
+						return error.error?.cod === '404'
+							? of(CityActions.LOAD_SUCCESS({ city: null }))
+							: of(CityActions.LOAD_FAILURE({ error }))
+					}
 					),
 				);
 			}),
