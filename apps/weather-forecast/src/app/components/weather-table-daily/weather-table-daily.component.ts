@@ -1,14 +1,7 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { City, takeUntilDestroyed, WeatherDailyItem } from '@bp/weather-forecast/services';
 import { combineLatest, map, ReplaySubject } from 'rxjs';
-
-type WeatherDataLocal = {
-	city: string,
-	data: {
-		date: Date,
-		temperature: number,
-	}[]
-}
+import { WeatherTableData, WeatherTableDataItem } from '../weather-table/weather-table-data';
 
 @Component({
 	selector: 'bp-weather-table-daily',
@@ -29,6 +22,7 @@ export class WeatherTableDailyComponent {
 	private data$$ = new ReplaySubject<WeatherDailyItem[] | null>(1);
 	private city$$ = new ReplaySubject<City | null>(1);
 
+
 	data$ = combineLatest([this.city$$, this.data$$]).pipe(
 		takeUntilDestroyed(this),
 		map(([city, data]) => {
@@ -40,8 +34,10 @@ export class WeatherTableDailyComponent {
 						temperature: i.temp.day,
 					}
 				})
-			} as WeatherDataLocal;
+			} as WeatherTableData;
 		})
 	);
+
+	columnText = (i: WeatherTableDataItem) => String(new Date(i.date).getDate());
 
 }

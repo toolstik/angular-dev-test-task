@@ -45,7 +45,11 @@
             "tsConfig": "apps/weather-forecast/tsconfig.app.json",
             "aot": true,
             "assets": ["apps/weather-forecast/src/favicon.ico", "apps/weather-forecast/src/assets"],
-            "styles": ["apps/weather-forecast/src/styles.scss"],
+            "styles": [
+				"apps/weather-forecast/src/styles.scss",
+				"node_modules/@taiga-ui/core/styles/taiga-ui-global.less",
+				"node_modules/@taiga-ui/core/styles/taiga-ui-theme.less"
+			],
             "scripts": []
           },
           "configurations": {

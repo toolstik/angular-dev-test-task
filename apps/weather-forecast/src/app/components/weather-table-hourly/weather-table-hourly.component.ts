@@ -1,14 +1,7 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { City, takeUntilDestroyed, WeatherHourlyItem } from '@bp/weather-forecast/services';
 import { combineLatest, map, ReplaySubject } from 'rxjs';
-
-type WeatherDataLocal = {
-	city: string,
-	data: {
-		date: Date,
-		temperature: number,
-	}[]
-}
+import { WeatherTableData, WeatherTableDataItem } from '../weather-table/weather-table-data';
 
 @Component({
 	selector: 'bp-weather-table-hourly',
@@ -39,9 +32,11 @@ export class WeatherTableHourlyComponent {
 						date: new Date(i.dt * 1000),
 						temperature: i.temp,
 					}
-				})
-			} as WeatherDataLocal;
+				}).filter(i => i.date.getHours() % 3 === 0).slice(0, 8)
+			} as WeatherTableData;
 		})
 	);
+
+	columnText = (i: WeatherTableDataItem) => String(new Date(i.date).getHours());
 
 }

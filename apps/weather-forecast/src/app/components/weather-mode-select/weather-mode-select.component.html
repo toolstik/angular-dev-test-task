@@ -1,4 +1,23 @@
-<select [formControl]="modeControl">
+<!-- <select [formControl]="modeControl">
 	<option [value]="modes.HOURLY">hourly</option>
 	<option [value]="modes.DAILY">daily</option>
-</select>
+</select> -->
+
+<tui-group [collapsed]="true">
+    <tui-radio-block
+        size="l"
+        contentAlign="right"
+        [formControl]="modeControl"
+        [item]="modes.HOURLY"
+    >
+        Hourly
+    </tui-radio-block>
+    <tui-radio-block
+        size="l"
+        contentAlign="right"
+        [formControl]="modeControl"
+        [item]="modes.DAILY"
+    >
+        Daily
+    </tui-radio-block>
+</tui-group>
