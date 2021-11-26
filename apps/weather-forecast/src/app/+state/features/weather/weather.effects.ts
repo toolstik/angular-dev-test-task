@@ -57,7 +57,6 @@ export class WeatherEffects {
 
 				// that mode data already exists, do nothing
 				if (state.weather?.[mode]) {
-					console.log('mode exists', mode)
 					return of();
 				}
 
@@ -65,7 +64,6 @@ export class WeatherEffects {
 
 				// city is not defined yet, do nothing
 				if (!city) {
-					console.log('no city', mode)
 					return of();
 				}
 

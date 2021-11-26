@@ -12,13 +12,18 @@ export class CityEffects {
 			ofType(CityActions.LOAD_REQUEST),
 			switchMap(action => {
 				if (!action.query) {
-					return of(null)
+					return of(CityActions.LOAD_SUCCESS({ city: null }));
 				}
 
-				return this.weatherService.getCities(action.query);
+				return this.weatherService.getCities(action.query).pipe(
+					map(city => CityActions.LOAD_SUCCESS({ city })),
+					catchError(error => error.cod === 404
+						? of(CityActions.LOAD_SUCCESS({ city: null }))
+						: of(CityActions.LOAD_FAILURE({ error }))
+					),
+				);
 			}),
-			map(city => CityActions.LOAD_SUCCESS({ city })),
-			catchError(error => of(CityActions.LOAD_FAILURE({ error })))
+
 		)
 	);
 

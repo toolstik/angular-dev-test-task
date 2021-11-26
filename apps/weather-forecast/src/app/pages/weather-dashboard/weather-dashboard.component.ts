@@ -1,8 +1,8 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { takeUntilDestroyed, WeatherMode, WeatherModeValue } from '@bp/weather-forecast/services';
-import { debounceTime, distinctUntilChanged, switchMap, tap } from 'rxjs';
+import { debounceTime, distinctUntilChanged, switchMap, take, tap } from 'rxjs';
 import { CityFacade } from '../../+state/features/city/city.facade';
 import { WeatherFacade } from '../../+state/features/weather/weather.facade';
 import { RouterFacade } from '../../+state/router.facade';
@@ -18,7 +18,7 @@ type QueryParams = {
 	styleUrls: ['./weather-dashboard.component.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class WeatherDashboardComponent {
+export class WeatherDashboardComponent implements OnInit {
 
 	searchControl = new FormControl();
 	modeControl = new FormControl(WeatherMode.DAILY);
@@ -27,6 +27,8 @@ export class WeatherDashboardComponent {
 	weather$ = this.weatherFacade.weather$;
 	daily$ = this.weatherFacade.daily$;
 	hourly$ = this.weatherFacade.hourly$;
+
+	queryParams$ = this.routerFacade.selectQueryParams<QueryParams>();
 
 	constructor(
 		private router: Router,
@@ -39,8 +41,7 @@ export class WeatherDashboardComponent {
 	}
 
 	private init() {
-		this.routerFacade
-			.selectQueryParams<QueryParams>()
+		this.queryParams$
 			.pipe(
 				takeUntilDestroyed(this),
 				tap(params => {
@@ -48,8 +49,6 @@ export class WeatherDashboardComponent {
 
 					this.cityFacade.loadCity(query);
 					this.weatherFacade.loadByMode(mode || WeatherMode.DAILY);
-					this.searchControl.setValue(query);
-					this.modeControl.setValue(mode || WeatherMode.DAILY);
 				})
 			)
 			.subscribe();
@@ -78,5 +77,21 @@ export class WeatherDashboardComponent {
 				}))
 			)
 			.subscribe();
+	}
+
+	ngOnInit() {
+
+		this.queryParams$
+			.pipe(
+				take(1),
+				tap(params => {
+					const { query, mode } = (params || {});
+
+					this.searchControl.setValue(query);
+					this.modeControl.setValue(mode || WeatherMode.DAILY);
+				}),
+			)
+			.subscribe();
+
 	}
 }

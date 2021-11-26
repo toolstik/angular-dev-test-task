@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { City, takeUntilDestroyed, WeatherHourlyItem } from '@bp/weather-forecast/services';
-import { combineLatest, map, Subject } from 'rxjs';
+import { combineLatest, map, ReplaySubject } from 'rxjs';
 
 type WeatherDataLocal = {
 	city: string,
@@ -26,8 +26,8 @@ export class WeatherTableHourlyComponent {
 		this.city$$.next(value);
 	}
 
-	private data$$ = new Subject<WeatherHourlyItem[] | null>();
-	private city$$ = new Subject<City | null>();
+	private data$$ = new ReplaySubject<WeatherHourlyItem[] | null>();
+	private city$$ = new ReplaySubject<City | null>();
 
 	data$ = combineLatest([this.city$$, this.data$$]).pipe(
 		takeUntilDestroyed(this),

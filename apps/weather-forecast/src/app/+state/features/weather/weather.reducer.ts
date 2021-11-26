@@ -44,5 +44,11 @@ export const weatherReducer = createReducer(
 			error,
 		};
 	}),
+	on(WeatherActions.CLEAR_DATA, state => {
+		return {
+			...state,
+			weather: null,
+		};
+	}),
 );
 

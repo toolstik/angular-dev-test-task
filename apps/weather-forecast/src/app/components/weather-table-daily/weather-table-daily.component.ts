@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { City, takeUntilDestroyed, WeatherDailyItem } from '@bp/weather-forecast/services';
-import { combineLatest, map, Subject } from 'rxjs';
+import { combineLatest, map, ReplaySubject } from 'rxjs';
 
 type WeatherDataLocal = {
 	city: string,
@@ -19,20 +19,22 @@ type WeatherDataLocal = {
 export class WeatherTableDailyComponent {
 
 	@Input() set data(value: WeatherDailyItem[] | null) {
+		console.log('set data', value);
 		this.data$$.next(value);
 	}
 
 	@Input() set city(value: City | null) {
+		console.log('set city', value);
 		this.city$$.next(value);
 	}
 
-	private data$$ = new Subject<WeatherDailyItem[] | null>();
-	private city$$ = new Subject<City | null>();
+	private data$$ = new ReplaySubject<WeatherDailyItem[] | null>(1);
+	private city$$ = new ReplaySubject<City | null>(1);
 
 	data$ = combineLatest([this.city$$, this.data$$]).pipe(
 		takeUntilDestroyed(this),
 		map(([city, data]) => {
-			console.log('daily', city, data);
+			console.log('combine', city, data);
 
 			return {
 				city: city?.name,
